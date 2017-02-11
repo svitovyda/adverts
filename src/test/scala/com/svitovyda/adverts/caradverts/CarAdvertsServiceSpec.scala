@@ -47,8 +47,6 @@ class CarAdvertsServiceSpec extends BaseAppSpec with BeforeAndAfterAll {
   }
 
   "add new car advert" in {
-    val service = new CarAdvertsService(db)
-
     whenReady(service.addAdvert(CarAdvert(test4))) { _ =>
       whenReady(service.getAllAdverts()) { result =>
         result.length shouldBe 4
@@ -56,11 +54,33 @@ class CarAdvertsServiceSpec extends BaseAppSpec with BeforeAndAfterAll {
     }
   }
 
-  "modify existing car advert" ignore {
-    val service = new CarAdvertsService(db)
+  "delete car advert" in {
+    whenReady(service.deleteAdvert(CarAdvertId(test4.id))) { amount =>
+      amount shouldBe 1
+      whenReady(service.getAllAdverts()) { result =>
+        result.length shouldBe 3
+      }
+    }
 
-    service.getAdvert(CarAdvertId.newId) shouldBe a[Left[_, _]]
-    service.modifyAdvert(CarAdvert(CarAdvertId.newId, "", Fuel.Diesel, 1)) shouldBe a[Left[_, _]]
+    whenReady(service.deleteAdvert(CarAdvertId("a"))) { amount =>
+      amount shouldBe 0
+      whenReady(service.getAllAdverts()) { result =>
+        result.length shouldBe 3
+      }
+    }
+  }
+
+  "modify existing car advert" in {
+    val modified = CarAdvert(test4.copy(id = test3.id))
+    whenReady(service.modifyAdvert(modified)) { amount =>
+      amount shouldBe 1
+      whenReady(service.getAllAdverts()) { result =>
+        result.length shouldBe 3
+      }
+      whenReady(service.getAdvert(CarAdvertId(test3.id))) { result =>
+        result shouldBe modified
+      }
+    }
   }
 
   override protected def afterAll(): Unit = {

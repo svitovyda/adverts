@@ -11,7 +11,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 class CarAdvertsService(db: Database)(implicit dbContext: ExecutionContext) {
 
   private val caradverts = TableQuery[CarAdvertTable]
-  private def getById(id: CarAdvertId) = caradverts.filter(_.id === id.value).take(1)
+  private def getById(id: CarAdvertId) = caradverts.filter(_.id === id.value)
 
   def init(): Unit = Await.ready(
     db.run(caradverts.schema.create),
@@ -23,7 +23,7 @@ class CarAdvertsService(db: Database)(implicit dbContext: ExecutionContext) {
   }
 
   def getAdvert(id: CarAdvertId): Future[CarAdvert] = {
-    db.run(getById(id).result).map(rows => CarAdvert(rows.head))
+    db.run(getById(id).take(1).result).map(rows => CarAdvert(rows.head))
   }
 
   def addAdvert(carAdvert: CarAdvert): Future[Any] = db.run(caradverts += carAdvert.toRow)
