@@ -41,8 +41,12 @@ class CarAdvertsServiceSpec extends BaseAppSpec with BeforeAndAfterAll {
   }
 
   "get one car advert" in {
-    whenReady(service.getAdvert(CarAdvertId(test1.id))) { result =>
+    whenReady(service.getAdvert(CarAdvertId(test1.id))) { case Some(result) =>
       result.title shouldBe test1.title
+    }
+
+    whenReady(service.getAdvert(CarAdvertId("a"))) { result =>
+      result shouldBe None
     }
   }
 
@@ -72,13 +76,24 @@ class CarAdvertsServiceSpec extends BaseAppSpec with BeforeAndAfterAll {
 
   "modify existing car advert" in {
     val modified = CarAdvert(test4.copy(id = test3.id))
+
     whenReady(service.modifyAdvert(modified)) { amount =>
       amount shouldBe 1
       whenReady(service.getAllAdverts()) { result =>
         result.length shouldBe 3
       }
       whenReady(service.getAdvert(CarAdvertId(test3.id))) { result =>
-        result shouldBe modified
+        result shouldBe Some(modified)
+      }
+    }
+
+    whenReady(service.modifyAdvert(modified.copy(id = CarAdvertId("abc")))) { amount =>
+      amount shouldBe 0
+      whenReady(service.getAllAdverts()) { result =>
+        result.length shouldBe 3
+      }
+      whenReady(service.getAdvert(CarAdvertId("abc"))) { result =>
+        result shouldBe None
       }
     }
   }

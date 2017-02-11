@@ -22,8 +22,8 @@ class CarAdvertsService(db: Database)(implicit dbContext: ExecutionContext) {
     _.map(CarAdvert(_)).toList
   }
 
-  def getAdvert(id: CarAdvertId): Future[CarAdvert] = {
-    db.run(getById(id).take(1).result).map(rows => CarAdvert(rows.head))
+  def getAdvert(id: CarAdvertId): Future[Option[CarAdvert]] = {
+    db.run(getById(id).take(1).result).map(rows => rows.headOption.map(CarAdvert(_)))
   }
 
   def addAdvert(carAdvert: CarAdvert): Future[Any] = db.run(caradverts += carAdvert.toRow)
