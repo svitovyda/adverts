@@ -1,4 +1,5 @@
 To run: `sbt run`
+App will use in-memory DB (H2).
 
 To test: `sbt test`
 

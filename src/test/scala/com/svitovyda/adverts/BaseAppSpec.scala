@@ -25,13 +25,19 @@ class BaseAppSpec extends TestKit(ActorSystem("MySpec"))
     classLoader = ApplicationLoader.getClass.getClassLoader,
     mode = Mode.Test)
 
-  implicit lazy val app = new AppComponents(ApplicationLoader.createContext(environment)).play.application
+  lazy val app = new AppComponents(ApplicationLoader.createContext(environment)).play.application
 
-  implicit lazy val port = 9010
+  val port: Int = 9010
+
+  val url: String = s"http://localhost:$port/"
 
   implicit val defaultPatience = PatienceConfig(10.seconds, 5000.millis)
 
-  override def configuration: Configuration = app.configuration
+  override def configuration: Configuration = {
+    val config = app.configuration.underlying
+    val testDb = config.getValue("h2memTest")
+    new Configuration(config.withValue("h2memLive", testDb))
+  }
 
   override def applicationLifecycle = new DefaultApplicationLifecycle()
 
