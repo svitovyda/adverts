@@ -36,7 +36,7 @@ class CarAdvertsController(
   }
 
   def update(id: String) = Action.async(parse.json[CarAdvertRequest]) { implicit request =>
-    dbService.modifyAdvert(request.body.toModel).map {
+    dbService.modifyAdvert(request.body.toModel(CarAdvertId(id))).map {
       case Some(result) => Ok(Json.toJson(result))
       case _            => ExpectationFailed("Something went wrong")
     }

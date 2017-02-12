@@ -10,5 +10,9 @@ class CarAdvertsComponents {
 
   implicit val dbContext: ExecutionContext = AppComponents.actorSystem.dispatchers.lookup("db-context")
 
-  lazy val controller = new CarAdvertsController(new CarAdvertsService(db))
+  lazy val controller = {
+    val service = new CarAdvertsService(db)
+    service.init()
+    new CarAdvertsController(service)
+  }
 }

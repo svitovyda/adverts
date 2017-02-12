@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 
 class CarAdvertsServiceSpec extends BaseAppSpec with BeforeAndAfterAll {
 
-  val db = Database.forConfig("h2memTest1")
+  val db = Database.forConfig("h2memTest")
 
   implicit val dbContext: ExecutionContext = app.actorSystem.dispatchers.lookup("db-context")
 

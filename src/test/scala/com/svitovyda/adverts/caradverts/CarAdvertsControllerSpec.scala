@@ -1,8 +1,8 @@
 package com.svitovyda.adverts.caradverts
 
 import com.svitovyda.adverts.BaseAppSpec
-import play.api.libs.json._
 import com.svitovyda.adverts.caradverts.CarAdvertsController._
+import play.api.libs.json._
 
 class CarAdvertsControllerSpec extends BaseAppSpec {
   "correctly parse input data" in {
