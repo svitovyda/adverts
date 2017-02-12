@@ -42,7 +42,7 @@ class CarAdvertsController(
     }
   }
 
-  def delete(id: String) = Action.async(parse.json[CarAdvertRequest]) { implicit request =>
+  def delete(id: String) = Action.async {
     dbService.deleteAdvert(CarAdvertId(id)).map {
       case 1 => Ok
       case _ => ExpectationFailed("Something went wrong")

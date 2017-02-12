@@ -64,5 +64,16 @@ class RouterComponentsSpec extends BaseAppSpec {
       (advert \ "price").as[Int] shouldBe 11
     }
 
+    whenReady(wsApi.url(s"http://localhost:$port/caradverts/$result").delete()) { result =>
+      result.status shouldBe 200
+
+      whenReady(wsApi.url(s"http://localhost:$port/caradverts").get()) { result =>
+        result.status shouldBe 200
+
+        val adverts = Json.parse(result.body).as[List[JsValue]]
+        adverts.length shouldBe 0
+      }
+    }
+
   }
 }
