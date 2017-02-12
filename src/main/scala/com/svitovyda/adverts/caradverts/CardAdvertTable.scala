@@ -12,7 +12,7 @@ case class CarAdvertRow(
   fuel: Fuel,
   price: Int,
   isNew: Boolean,
-  mileadge: Option[Int],
+  mileage: Option[Int],
   firstRegistration: Option[Int]
 )
 object CarAdvertRow {

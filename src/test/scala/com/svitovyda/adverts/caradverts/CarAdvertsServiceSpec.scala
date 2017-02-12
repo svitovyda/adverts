@@ -11,16 +11,16 @@ import scala.concurrent.ExecutionContext
 
 class CarAdvertsServiceSpec extends BaseAppSpec with BeforeAndAfterAll {
 
-  val db = Database.forConfig("h2mem1")
+  val db = Database.forConfig("h2memTest1")
 
   implicit val dbContext: ExecutionContext = app.actorSystem.dispatchers.lookup("db-context")
 
   val service = new CarAdvertsService(db)
 
-  private val test1 = CarAdvertRow(CarAdvertId.newId.value, "test1", Fuel.Diesel, 10, false, None, None)
-  private val test2 = CarAdvertRow(CarAdvertId.newId.value, "test2", Fuel.Gasoline, 20, false, None, None)
-  private val test3 = CarAdvertRow(CarAdvertId.newId.value, "test3", Fuel.Diesel, 30, true, Some(4), Some(2001))
-  private val test4 = CarAdvertRow(CarAdvertId.newId.value, "test4", Fuel.Gasoline, 13, true, Some(5), Some(2004))
+  private val test1 = CarAdvertRow(CarAdvertId.newId.value, "test1", Fuel.Diesel, 10, true, None, None)
+  private val test2 = CarAdvertRow(CarAdvertId.newId.value, "test2", Fuel.Gasoline, 20, true, None, None)
+  private val test3 = CarAdvertRow(CarAdvertId.newId.value, "test3", Fuel.Diesel, 30, false, Some(4), Some(2001))
+  private val test4 = CarAdvertRow(CarAdvertId.newId.value, "test4", Fuel.Gasoline, 13, false, Some(5), Some(2004))
 
   private val caradverts = TableQuery[CarAdvertTable]
 
@@ -77,8 +77,8 @@ class CarAdvertsServiceSpec extends BaseAppSpec with BeforeAndAfterAll {
   "modify existing car advert" in {
     val modified = CarAdvert(test4.copy(id = test3.id))
 
-    whenReady(service.modifyAdvert(modified)) { amount =>
-      amount shouldBe 1
+    whenReady(service.modifyAdvert(modified)) { result =>
+      result shouldBe Some(modified)
       whenReady(service.getAllAdverts()) { result =>
         result.length shouldBe 3
       }
@@ -88,7 +88,7 @@ class CarAdvertsServiceSpec extends BaseAppSpec with BeforeAndAfterAll {
     }
 
     whenReady(service.modifyAdvert(modified.copy(id = CarAdvertId("abc")))) { amount =>
-      amount shouldBe 0
+      amount shouldBe None
       whenReady(service.getAllAdverts()) { result =>
         result.length shouldBe 3
       }

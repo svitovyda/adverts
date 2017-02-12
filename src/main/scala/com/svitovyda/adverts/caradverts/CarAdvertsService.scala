@@ -26,11 +26,16 @@ class CarAdvertsService(db: Database)(implicit dbContext: ExecutionContext) {
     db.run(getById(id).take(1).result).map(rows => rows.headOption.map(CarAdvert(_)))
   }
 
-  def addAdvert(carAdvert: CarAdvert): Future[Any] = db.run(caradverts += carAdvert.toRow)
+  def addAdvert(carAdvert: CarAdvert): Future[CarAdvert] =
+    db.run(caradverts += carAdvert.toRow).map(_ => carAdvert)
 
   def deleteAdvert(id: CarAdvertId): Future[Int] = db.run(getById(id).delete)
 
-  def modifyAdvert(carAdvert: CarAdvert): Future[Int] = db.run(getById(carAdvert.id).update(carAdvert.toRow))
+  def modifyAdvert(carAdvert: CarAdvert): Future[Option[CarAdvert]] =
+    db.run(getById(carAdvert.id).update(carAdvert.toRow)).map {
+      case 1 => Some(carAdvert)
+      case _ => None
+    }
 }
 
 object CarAdvertsService {
@@ -46,7 +51,7 @@ object CarAdvertsService {
     fuel: CarAdvert.Fuel,
     price: Int,
     isNew: Boolean = false,
-    mileadge: Option[Int] = None,
+    mileage: Option[Int] = None,
     firstRegistration: Option[Int] = None // for now - only year
   ) {
     def toRow: CarAdvertRow = CarAdvertRow(
@@ -55,7 +60,7 @@ object CarAdvertsService {
       fuel = fuel,
       price = price,
       isNew = isNew,
-      mileadge = mileadge,
+      mileage = mileage,
       firstRegistration = firstRegistration
     )
   }
@@ -66,7 +71,7 @@ object CarAdvertsService {
       fuel = row.fuel,
       price = row.price,
       isNew = row.isNew,
-      mileadge = row.mileadge,
+      mileage = row.mileage,
       firstRegistration = row.firstRegistration
     )
 
