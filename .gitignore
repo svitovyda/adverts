@@ -1,0 +1,32 @@
+# intellij idea stuff
+.iml
+.ipr
+.iws
+
+# eclipse stuff
+.project
+.settings
+.classpath
+.metadata
+.externalToolBuilders
+
+# mac os stuff
+.DS_Store
+
+# other stuff
+*.patch
+*.log
+*test-output
+.cache
+*~
+
+out/
+target/
+.idea/
+project/project/
+src/main/java/
+src/main/scala-2.11/
+src/main/scala/com/svitovyda/adverts/caradverts/t.md
+src/test/java/
+src/test/resources/
+src/test/scala-2.11/
